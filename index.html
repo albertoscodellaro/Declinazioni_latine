@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Interattivo sui Sostantivi Latini - Modello Prof. Giuseppe Frappa</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Lora', 'serif'],
+            cinzel: ['Cinzel', 'serif'],
+          },
+          colors: {
+            latin: {
+              50: '#fbf9f5',
+              100: '#f5efe4',
+              200: '#e8dbca',
+              300: '#d7bfaa',
+              600: '#9e6d47',
+              700: '#845335',
+              800: '#6d432d',
+              900: '#593828',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-amber-200">
+
+  <!-- TOP HEADER / DEDICATION BANNER -->
+  <header class="bg-slate-900 text-slate-100 border-b-4 border-amber-600 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-amber-600 text-slate-900 w-12 h-12 rounded-lg flex items-center justify-center font-cinzel text-2xl font-bold shadow-inner">
+          <i class="fa-solid fa-scroll"></i>
+        </div>
+        <div>
+          <h1 class="font-cinzel text-xl md:text-2xl font-bold text-amber-400 tracking-wide">
+            Test sui Sostantivi Latini
+          </h1>
+          <p class="text-xs md:text-sm text-slate-300 flex items-center gap-1">
+            <span>Analisi morfologica delle declinazioni</span>
+            <span class="text-amber-500 font-semibold">• Grazie prof. Giuseppe Frappa</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Action Header Badges -->
+      <div class="flex items-center gap-2 flex-wrap text-xs">
+        <span class="bg-slate-800 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-graduation-cap text-amber-400"></i>
+          Modello originale poesialatina.it
+        </span>
+        <button onclick="openVocabularyModal()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-book-bookmark"></i>
+          Gestisci Sostantivi (<span id="nounCountBadge">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+    <!-- HERO INTRO & CREDIT BANNER -->
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-5 shadow-sm flex flex-col md:flex-row items-center gap-4 text-slate-700">
+      <div class="text-3xl text-amber-700 hidden md:block px-2">
+        <i class="fa-solid fa-landmark"></i>
+      </div>
+      <div class="text-xs md:text-sm leading-relaxed space-y-1">
+        <p class="font-medium text-slate-900">
+          Benvenuto nel test di verifica e allenamento sulla declinazione dei sostantivi latini.
+        </p>
+        <p class="text-slate-600">
+          Scegli le declinazioni e i generi su cui esercitarti, seleziona il numero di quesiti ed avvia il test. Per ogni forma proposta, individua e spunta <strong>tutte le sue possibili valenze morfologiche</strong> (caso e numero).
+        </p>
+        <p class="text-amber-800 font-semibold text-xs pt-1">
+          <i class="fa-solid fa-heart text-red-500 mr-1"></i>
+          Si ringrazia calorosamente il <strong>prof. Giuseppe Frappa</strong> per l'ideazione dell'algoritmo originale e del modello didattico su <em>poesialatina.it</em>.
+        </p>
+      </div>
+    </div>
+
+    <!-- CONFIGURATION & SELECTION PANEL -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT COLUMN: SETTINGS & FILTERS (4 cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        
+        <!-- DECLENSION & GENDER FILTERS -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h2 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-filter text-amber-600"></i>
+              Filtro Sostantivi
+            </h2>
+            <div class="flex gap-1 text-xs">
+              <button onclick="selectAllFilters()" class="text-indigo-600 hover:text-indigo-800 font-medium px-2 py-0.5 rounded hover:bg-indigo-50">Tutti</button>
+              <span class="text-slate-300">|</span>
+              <button onclick="deselectAllFilters()" class="text-red-600 hover:text-red-800 font-medium px-2 py-0.5 rounded hover:bg-red-50">Nessuno</button>
+            </div>
+          </div>
+
+          <!-- DECLENSIONS CHECKBOXES -->
+          <div>
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-2">Declinazioni:</span>
+            <div class="grid grid-cols-1 gap-1.5 text-xs">
+              <label class="flex items-center gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer border border-transparent hover:border-slate-200">
+                <input type="checkbox" id="decl1" class="decl-filter rounded text-amber-600 focus:ring-amber-500" checked onchange="updateFilterState()">
+                <span class="font-medium">1ª Declinazione</span>
+                <span class="text-slate-400 text-[10px] ml-auto">(es. rosa, puella)</span>
+              </label>
+              <label class="flex items-center gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer border border-transparent hover:border-slate-200">
+                <input type="checkbox" id="decl2" class="decl-filter rounded text-amber-600 focus:ring-amber-500" checked onchange="updateFilterState()">
+                <span class="font-medium">2ª Declinazione</span>
+                <span class="text-slate-400 text-[10px] ml-auto">(es. dominus, bellum)</span>
+              </label>
+              <label class="flex items-center gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer border border-transparent hover:border-slate-200">
+                <input type="checkbox" id="decl3" class="decl-filter rounded text-amber-600 focus:ring-amber-500" checked onchange="updateFilterState()">
+                <span class="font-medium">3ª Declinazione</span>
+                <span class="text-slate-400 text-[10px] ml-auto">(es. rex, corpus, mare)</span>
+              </label>
+              <label class="flex items-center gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer border border-transparent hover:border-slate-200">
+                <input type="checkbox" id="decl4" class="decl-filter rounded text-amber-600 focus:ring-amber-500" checked onchange="updateFilterState()">
+                <span class="font-medium">4ª Declinazione</span>
+                <span class="text-slate-400 text-[10px] ml-auto">(es. fructus, cornu)</span>
+              </label>
+              <label class="flex items-center gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer border border-transparent hover:border-slate-200">
+                <input type="checkbox" id="decl5" class="decl-filter rounded text-amber-600 focus:ring-amber-500" checked onchange="updateFilterState()">
+                <span class="font-medium">5ª Declinazione</span>
+                <span class="text-slate-400 text-[10px] ml-auto">(es. res, dies)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- GENDER CHECKBOXES -->
+          <div class="pt-2 border-t border-slate-100">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-2">Generi:</span>
+            <div class="grid grid-cols-3 gap-2 text-xs">
+              <label class="flex items-center justify-center gap-1.5 p-2 rounded bg-blue-50/60 border border-blue-200 text-blue-900 cursor-pointer hover:bg-blue-100">
+                <input type="checkbox" id="genM" class="gender-filter rounded text-blue-600 focus:ring-blue-500" checked onchange="updateFilterState()">
+                <span class="font-semibold">Maschile</span>
+              </label>
+              <label class="flex items-center justify-center gap-1.5 p-2 rounded bg-pink-50/60 border border-pink-200 text-pink-900 cursor-pointer hover:bg-pink-100">
+                <input type="checkbox" id="genF" class="gender-filter rounded text-pink-600 focus:ring-pink-500" checked onchange="updateFilterState()">
+                <span class="font-semibold">Femminile</span>
+              </label>
+              <label class="flex items-center justify-center gap-1.5 p-2 rounded bg-emerald-50/60 border border-emerald-200 text-emerald-900 cursor-pointer hover:bg-emerald-100">
+                <input type="checkbox" id="genN" class="gender-filter rounded text-emerald-600 focus:ring-emerald-500" checked onchange="updateFilterState()">
+                <span class="font-semibold">Neutro</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEST LIMITS & OPTIONS CARD -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-4">
+          <h2 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-2">
+            <i class="fa-solid fa-sliders text-amber-600"></i>
+            Modalità & Opzioni Prova
+          </h2>
+
+          <!-- QUESTION LIMIT SELECTOR -->
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1.5">
+              Numero di Forme / Domande:
+            </label>
+            <div class="grid grid-cols-3 gap-1.5 text-xs">
+              <button type="button" onclick="setLimit(10)" class="limit-btn bg-amber-50 text-amber-900 border border-amber-300 font-bold py-1.5 px-2 rounded transition hover:bg-amber-100 active shadow-sm" data-limit="10">10 Quesiti</button>
+              <button type="button" onclick="setLimit(15)" class="limit-btn bg-slate-50 text-slate-700 border border-slate-200 font-medium py-1.5 px-2 rounded transition hover:bg-slate-100" data-limit="15">15 Quesiti</button>
+              <button type="button" onclick="setLimit(20)" class="limit-btn bg-slate-50 text-slate-700 border border-slate-200 font-medium py-1.5 px-2 rounded transition hover:bg-slate-100" data-limit="20">20 Quesiti</button>
+              <button type="button" onclick="setLimit(30)" class="limit-btn bg-slate-50 text-slate-700 border border-slate-200 font-medium py-1.5 px-2 rounded transition hover:bg-slate-100" data-limit="30">30 Quesiti</button>
+              <button type="button" onclick="setLimit(50)" class="limit-btn bg-slate-50 text-slate-700 border border-slate-200 font-medium py-1.5 px-2 rounded transition hover:bg-slate-100" data-limit="50">50 Quesiti</button>
+              <button type="button" onclick="setLimit(0)" class="limit-btn bg-slate-50 text-slate-700 border border-slate-200 font-medium py-1.5 px-2 rounded transition hover:bg-slate-100" data-limit="0">Libera ∞</button>
+            </div>
+          </div>
+
+          <!-- TIMER SWITCH -->
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-stopwatch text-amber-600 text-base"></i>
+              <div>
+                <div class="font-semibold text-slate-800">Timer per quesito</div>
+                <div class="text-slate-500 text-[11px]">25 secondi di tempo per ciascuna forma</div>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="timerToggle" class="sr-only peer" checked onchange="toggleTimerSetting()">
+              <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-600"></div>
+            </label>
+          </div>
+
+          <!-- RESTART / RESET BUTTON -->
+          <button onclick="resetCurrentSession()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-2 border border-slate-300">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            Riavvia Sessione / Azzera Punteggio
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: ACTIVE QUIZ WORKSPACE (7 cols) -->
+      <div class="lg:col-span-7 space-y-4">
+
+        <!-- QUIZ CARD -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-md p-5 space-y-5 relative">
+          
+          <!-- PROGRESS & TIMER HEADER -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
+            <div>
+              <span id="questionProgressText" class="font-bold text-amber-800 text-sm tracking-wide">
+                Domanda 1 di 10
+              </span>
+              <div class="w-36 md:w-48 bg-slate-200 h-2 rounded-full overflow-hidden mt-1">
+                <div id="progressBar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
+              </div>
+            </div>
+
+            <!-- TIMER DISPLAY BADGE -->
+            <div id="timerContainer" class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-900 font-bold px-3 py-1.5 rounded-lg text-sm">
+              <i class="fa-solid fa-clock animate-pulse text-amber-600"></i>
+              <span id="timerDisplay">25 s</span>
+            </div>
+          </div>
+
+          <!-- QUESTION LATIN FORM DISPLAY CARD -->
+          <div class="bg-slate-900 text-white rounded-xl p-5 text-center shadow-inner relative overflow-hidden">
+            <div class="text-xs uppercase tracking-widest text-amber-400 font-medium mb-1">
+              Analizza la seguente forma latina:
+            </div>
+            
+            <div id="latinFormWord" class="font-serif text-3xl md:text-4xl font-bold text-amber-300 tracking-wide my-2">
+              ---
+            </div>
+
+            <div id="latinFormLemma" class="text-slate-300 text-xs md:text-sm font-sans italic">
+              (Seleziona o avvia una nuova domanda)
+            </div>
+          </div>
+
+          <!-- INTERACTIVE MATRIX TABLE FOR CASE / NUMBER SELECTION -->
+          <div>
+            <div class="text-xs font-semibold text-slate-600 mb-2 flex items-center justify-between">
+              <span>Seleziona TUTTE le possibili valenze della parola:</span>
+              <span class="text-slate-400 text-[11px]">(Forme polivalenti)</span>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm">
+              <table class="w-full text-xs text-left text-slate-700">
+                <thead class="text-slate-800 uppercase bg-slate-100 font-bold border-b border-slate-200">
+                  <tr>
+                    <th scope="col" class="px-4 py-2.5">Caso</th>
+                    <th scope="col" class="px-4 py-2.5 text-center bg-amber-50/50">Singolare</th>
+                    <th scope="col" class="px-4 py-2.5 text-center bg-indigo-50/50">Plurale</th>
+                  </tr>
+                </thead>
+                <tbody id="casesTableBody" class="divide-y divide-slate-200">
+                  <!-- Generated Rows for 6 Cases -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- QUIZ CONTROLS BUTTONS -->
+          <div class="flex flex-col sm:flex-row gap-2 pt-2">
+            <button id="btnNewQuestion" onclick="nextQuestion()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-play"></i>
+              Nuova Domanda
+            </button>
+
+            <button id="btnCheckAnswer" onclick="checkUserAnswer()" disabled class="flex-1 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 disabled:text-slate-500 text-slate-950 font-bold py-2.5 px-4 rounded-lg text-sm shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-check-double"></i>
+              Controlla Risposta
+            </button>
+
+            <button id="btnFinalVal" onclick="showFinalEvaluationModal()" disabled class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold py-2.5 px-4 rounded-lg text-sm shadow transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-award"></i>
+              Valutazione
+            </button>
+          </div>
+
+          <!-- DETAILED FEEDBACK & EXPLANATION BOX -->
+          <div id="feedbackBox" class="hidden rounded-xl p-4 border text-xs leading-relaxed transition-all">
+            <!-- Dynamic content inserted by JS -->
+          </div>
+
+        </div>
+
+        <!-- STATS & SCOREBAR DASHBOARD -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div class="grid grid-cols-5 gap-2 text-center text-xs">
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+              <div class="text-slate-400 text-[10px] uppercase font-bold">Risposte</div>
+              <div id="statTotal" class="text-base font-bold text-slate-800">0</div>
+            </div>
+            <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+              <div class="text-emerald-600 text-[10px] uppercase font-bold">Esatte</div>
+              <div id="statExact" class="text-base font-bold text-emerald-700">0</div>
+            </div>
+            <div class="bg-amber-50 p-2 rounded-lg border border-amber-200">
+              <div class="text-amber-600 text-[10px] uppercase font-bold">Parziali</div>
+              <div id="statPartial" class="text-base font-bold text-amber-700">0</div>
+            </div>
+            <div class="bg-red-50 p-2 rounded-lg border border-red-200">
+              <div class="text-red-600 text-[10px] uppercase font-bold">Errate</div>
+              <div id="statWrong" class="text-base font-bold text-red-700">0</div>
+            </div>
+            <div class="bg-indigo-50 p-2 rounded-lg border border-indigo-200">
+              <div class="text-indigo-600 text-[10px] uppercase font-bold">Voto</div>
+              <div id="statMark" class="text-base font-bold text-indigo-800">--</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER CREDIT -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-8">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+      <div>
+        <p class="font-semibold text-slate-200">Test di Analisi Morfologica dei Sostantivi Latini</p>
+        <p class="text-slate-500">Ispirato e dedicato al lavoro del <strong>prof. Giuseppe Frappa</strong> (poesialatina.it)</p>
+      </div>
+      <div class="text-amber-500 font-medium">
+        "Grazie prof. Giuseppe Frappa"
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- MODAL: VOCABULARY MANAGER ("Gestisci Sostantivi") -->
+  <!-- ========================================== -->
+  <div id="vocabularyModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 md:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-book-open text-amber-400 text-lg"></i>
+          <div>
+            <h3 class="font-bold text-base text-amber-400">Gestione Vocabolario Sostantivi</h3>
+            <p class="text-xs text-slate-400">Aggiungi, modifica o personalizza la lista dei sostantivi latini</p>
+          </div>
+        </div>
+        <button onclick="closeVocabularyModal()" class="text-slate-400 hover:text-white text-lg p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Split: Add Form + Table) -->
+      <div class="p-4 md:p-5 overflow-y-auto space-y-5 flex-grow">
+
+        <!-- ADD/EDIT FORM ACCORDION -->
+        <div class="bg-amber-50/60 border border-amber-200 rounded-xl p-4 space-y-3">
+          <h4 id="formTitle" class="font-bold text-xs uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-plus-circle"></i> Aggiungi Nuovo Sostantivo
+          </h4>
+          
+          <form id="nounForm" onsubmit="handleNounFormSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+            <input type="hidden" id="nounEditId" value="">
+
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Nominativo Sing.</label>
+              <input type="text" id="inputNomSg" required placeholder="es. rosa" class="w-full border border-slate-300 rounded px-2.5 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Genitivo Sing. (esito)</label>
+              <input type="text" id="inputGenSg" required placeholder="es. rosae" class="w-full border border-slate-300 rounded px-2.5 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Tema / Radice</label>
+              <input type="text" id="inputStem" required placeholder="es. ros" class="w-full border border-slate-300 rounded px-2.5 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Declinazione</label>
+              <select id="inputDecl" required class="w-full border border-slate-300 rounded px-2.5 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+                <option value="1">1ª Declinazione</option>
+                <option value="2">2ª Declinazione</option>
+                <option value="3">3ª Declinazione</option>
+                <option value="4">4ª Declinazione</option>
+                <option value="5">5ª Declinazione</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Genere Grammaticale</label>
+              <select id="inputGender" required class="w-full border border-slate-300 rounded px-2.5 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+                <option value="M">Maschile (m.)</option>
+                <option value="F">Femminile (f.)</option>
+                <option value="N">Neutro (n.)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">Tipo / Variante (3ª decl)</label>
+              <select id="inputType" class="w-full border border-slate-300 rounded px-2.5 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+                <option value="standard">Standard / Consonantica</option>
+                <option value="i_stem">Parissillabo / i-stem (-ium)</option>
+                <option value="neuter_i_stem">Neutro in -e, -al, -ar (-i, -ia, -ium)</option>
+              </select>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-slate-600 font-semibold mb-1">Traduzione / Significato</label>
+              <input type="text" id="inputMeaning" required placeholder="es. rosa, fiore" class="w-full border border-slate-300 rounded px-2.5 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div class="sm:col-span-2 md:col-span-4 flex justify-end gap-2 pt-1">
+              <button type="button" onclick="resetForm()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded font-semibold transition">Annulla</button>
+              <button type="submit" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-slate-950 font-bold rounded transition flex items-center gap-1.5">
+                <i class="fa-solid fa-floppy-disk"></i> Salva Sostantivo
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- VOCABULARY TABLE TOOLBAR -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="relative w-full sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400"></i>
+            <input type="text" id="vocabSearch" oninput="renderVocabularyTable()" placeholder="Cerca sostantivo o traduzione..." class="w-full border border-slate-300 rounded-lg pl-8 pr-3 py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button onclick="exportVocabularyJSON()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded border border-slate-300 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-download"></i> Esporta JSON
+            </button>
+            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded border border-slate-300 font-semibold cursor-pointer flex items-center gap-1">
+              <i class="fa-solid fa-upload"></i> Importa JSON
+              <input type="file" accept=".json" onchange="importVocabularyJSON(event)" class="hidden">
+            </label>
+            <button onclick="resetVocabularyToDefault()" class="bg-red-50 hover:bg-red-100 text-red-700 px-2.5 py-1.5 rounded border border-red-200 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-rotate-left"></i> Ripristina Default
+            </button>
+          </div>
+        </div>
+
+        <!-- VOCABULARY TABLE -->
+        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+          <div class="max-h-60 overflow-y-auto">
+            <table class="w-full text-xs text-left text-slate-700">
+              <thead class="text-slate-800 uppercase bg-slate-100 font-bold sticky top-0 border-b border-slate-200">
+                <tr>
+                  <th class="px-3 py-2">Paradigma</th>
+                  <th class="px-3 py-2">Decl.</th>
+                  <th class="px-3 py-2">Gen.</th>
+                  <th class="px-3 py-2">Significato</th>
+                  <th class="px-3 py-2 text-right">Azioni</th>
+                </tr>
+              </thead>
+              <tbody id="vocabTableBody" class="divide-y divide-slate-200">
+                <!-- Dynamic Vocabulary Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex justify-end">
+        <button onclick="closeVocabularyModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-1.5 rounded-lg text-xs font-semibold">
+          Chiudi
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: FINAL EVALUATION REPORT -->
+  <!-- ========================================== -->
+  <div id="evaluationModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+      
+      <!-- Modal Header -->
+      <div class="bg-slate-900 text-white p-5 text-center relative border-b border-slate-800">
+        <div class="w-16 h-16 bg-amber-500 text-slate-950 rounded-full flex items-center justify-center text-3xl mx-auto mb-2 shadow-lg">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <h3 class="font-cinzel text-xl font-bold text-amber-400">Valutazione Finale</h3>
+        <p class="text-xs text-slate-300">Resoconto dettagliato della prova didattica</p>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6 space-y-5 text-center">
+
+        <!-- SCORE DISPLAY -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <div class="text-xs font-bold uppercase text-amber-800 tracking-wider">Voto Conseguito</div>
+          <div id="finalMarkScore" class="text-5xl font-extrabold text-amber-900 my-1">
+            -- / 10
+          </div>
+          <p id="finalComment" class="text-xs text-slate-700 italic font-medium mt-2">
+            --
+          </p>
+        </div>
+
+        <!-- STATS BREAKDOWN -->
+        <div class="grid grid-cols-4 gap-2 text-xs">
+          <div class="bg-slate-50 p-2 rounded border border-slate-200">
+            <span class="block text-[10px] text-slate-400 uppercase font-bold">Totale</span>
+            <span id="finalStatTotal" class="font-bold text-slate-800">0</span>
+          </div>
+          <div class="bg-emerald-50 p-2 rounded border border-emerald-200">
+            <span class="block text-[10px] text-emerald-600 uppercase font-bold">Esatte</span>
+            <span id="finalStatExact" class="font-bold text-emerald-700">0</span>
+          </div>
+          <div class="bg-amber-50 p-2 rounded border border-amber-200">
+            <span class="block text-[10px] text-amber-600 uppercase font-bold">Parziali</span>
+            <span id="finalStatPartial" class="font-bold text-amber-700">0</span>
+          </div>
+          <div class="bg-red-50 p-2 rounded border border-red-200">
+            <span class="block text-[10px] text-red-600 uppercase font-bold">Errate</span>
+            <span id="finalStatWrong" class="font-bold text-red-700">0</span>
+          </div>
+        </div>
+
+        <!-- BREAKDOWN PER DECLENSION -->
+        <div class="text-left bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs space-y-1.5">
+          <div class="font-bold text-slate-700 border-b border-slate-200 pb-1 flex justify-between">
+            <span>Dettaglio per Declinazione</span>
+            <span class="text-[10px] text-slate-400">(Esatte / Parziali / Errate)</span>
+          </div>
+          <div id="declensionBreakdownList" class="space-y-1 text-slate-600 font-mono text-[11px]">
+            <!-- Dynamic Breakdown Rows -->
+          </div>
+        </div>
+
+        <div class="text-[11px] text-slate-400 italic">
+          Modello didattico del prof. Giuseppe Frappa (poesialatina.it)
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-100 p-4 border-t border-slate-200 flex justify-center gap-3">
+        <button onclick="closeEvaluationModal()" class="bg-amber-600 hover:bg-amber-700 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs transition shadow">
+          <i class="fa-solid fa-rotate-right mr-1"></i> Nuova Prova
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT LOGIC & MORPHOLOGICAL ENGINE -->
+  <!-- ========================================== -->
+  <script>
+    // --- CONSTANTS & LABELS ---
+    const CASES = ["Nominativo", "Genitivo", "Dativo", "Accusativo", "Vocativo", "Ablativo"];
+    const NUMBERS = ["singolare", "plurale"];
+    const DECL_NAMES = ["1ª", "2ª", "3ª", "4ª", "5ª"];
+    const MESSAGES_EXACT = ["Bravo!", "Complimenti!", "Hai ragione!", "È proprio così!", "Bene!", "È vero!"];
+    const MESSAGES_TIMEOUT = ["Il tempo a tua disposizione è scaduto!", "Sei stato troppo lento!", "Datti un po' da fare!", "Sbrigati!"];
+    const STORAGE_KEY = "latino_sostantivi_v2";
+
+    // --- DEFAULT INITIAL NOUNS DATASET ---
+    const DEFAULT_NOUNS = [
+      // 1st Declension
+      { id: "1", nomSg: "rosa", genSg: "rosae", stem: "ros", decl: 1, gender: "F", meaning: "rosa, fiore", type: "standard" },
+      { id: "2", nomSg: "puella", genSg: "puellae", stem: "puell", decl: 1, gender: "F", meaning: "ragazza, fanciulla", type: "standard" },
+      { id: "3", nomSg: "poeta", genSg: "poetae", stem: "poet", decl: 1, gender: "M", meaning: "poeta", type: "standard" },
+      { id: "4", nomSg: "nauta", genSg: "nautae", stem: "naut", decl: 1, gender: "M", meaning: "marinaio", type: "standard" },
+      { id: "5", nomSg: "silva", genSg: "silvae", stem: "silv", decl: 1, gender: "F", meaning: "bosco, selva", type: "standard" },
+      { id: "6", nomSg: "patria", genSg: "patriae", stem: "patri", decl: 1, gender: "F", meaning: "patria", type: "standard" },
+      { id: "7", nomSg: "agricola", genSg: "agricolae", stem: "agricol", decl: 1, gender: "M", meaning: "contadino", type: "standard" },
+      { id: "8", nomSg: "vita", genSg: "vitae", stem: "vit", decl: 1, gender: "F", meaning: "vita", type: "standard" },
+      { id: "9", nomSg: "epistula", genSg: "epistulae", stem: "epistul", decl: 1, gender: "F", meaning: "lettera", type: "standard" },
+
+      // 2nd Declension
+      { id: "10", nomSg: "dominus", genSg: "domini", stem: "domin", decl: 2, gender: "M", meaning: "padrone, signore", type: "standard" },
+      { id: "11", nomSg: "puer", genSg: "pueri", stem: "puer", decl: 2, gender: "M", meaning: "fanciullo, ragazzo", type: "standard" },
+      { id: "12", nomSg: "ager", genSg: "agri", stem: "agr", decl: 2, gender: "M", meaning: "campo", type: "standard" },
+      { id: "13", nomSg: "magister", genSg: "magistri", stem: "magistr", decl: 2, gender: "M", meaning: "maestro", type: "standard" },
+      { id: "14", nomSg: "amicus", genSg: "amici", stem: "amic", decl: 2, gender: "M", meaning: "amico", type: "standard" },
+      { id: "15", nomSg: "filius", genSg: "filii", stem: "fili", decl: 2, gender: "M", meaning: "figlio", type: "standard" },
+      { id: "16", nomSg: "lupus", genSg: "lupi", stem: "lup", decl: 2, gender: "M", meaning: "lupo", type: "standard" },
+      { id: "17", nomSg: "humus", genSg: "humi", stem: "hum", decl: 2, gender: "F", meaning: "terra, suolo", type: "standard" },
+      { id: "18", nomSg: "bellum", genSg: "belli", stem: "bell", decl: 2, gender: "N", meaning: "guerra", type: "standard" },
+      { id: "19", nomSg: "donum", genSg: "doni", stem: "don", decl: 2, gender: "N", meaning: "dono, regalo", type: "standard" },
+      { id: "20", nomSg: "verbum", genSg: "verbi", stem: "verb", decl: 2, gender: "N", meaning: "parola", type: "standard" },
+      { id: "21", nomSg: "oppidum", genSg: "oppidi", stem: "oppid", decl: 2, gender: "N", meaning: "città fortificata", type: "standard" },
+
+      // 3rd Declension
+      { id: "22", nomSg: "rex", genSg: "regis", stem: "reg", decl: 3, gender: "M", meaning: "re", type: "standard" },
+      { id: "23", nomSg: "dux", genSg: "ducis", stem: "duc", decl: 3, gender: "M", meaning: "comandante, guida", type: "standard" },
+      { id: "24", nomSg: "virtus", genSg: "virtutis", stem: "virtut", decl: 3, gender: "F", meaning: "virtù, valore", type: "standard" },
+      { id: "25", nomSg: "miles", genSg: "militis", stem: "milit", decl: 3, gender: "M", meaning: "soldato", type: "standard" },
+      { id: "26", nomSg: "homo", genSg: "hominis", stem: "homin", decl: 3, gender: "M", meaning: "uomo, persona", type: "standard" },
+      { id: "27", nomSg: "pater", genSg: "patris", stem: "patr", decl: 3, gender: "M", meaning: "padre", type: "standard" },
+      { id: "28", nomSg: "civis", genSg: "civis", stem: "civ", decl: 3, gender: "M", meaning: "cittadino", type: "i_stem" },
+      { id: "29", nomSg: "urbs", genSg: "urbis", stem: "urb", decl: 3, gender: "F", meaning: "città", type: "i_stem" },
+      { id: "30", nomSg: "gens", genSg: "gentis", stem: "gent", decl: 3, gender: "F", meaning: "popolo, gens", type: "i_stem" },
+      { id: "31", nomSg: "corpus", genSg: "corporis", stem: "corpor", decl: 3, gender: "N", meaning: "corpo", type: "standard" },
+      { id: "32", nomSg: "nomen", genSg: "nominis", stem: "nomin", decl: 3, gender: "N", meaning: "nome", type: "standard" },
+      { id: "33", nomSg: "tempus", genSg: "temporis", stem: "tempor", decl: 3, gender: "N", meaning: "tempo", type: "standard" },
+      { id: "34", nomSg: "caput", genSg: "capitis", stem: "capit", decl: 3, gender: "N", meaning: "capo, testa", type: "standard" },
+      { id: "35", nomSg: "mare", genSg: "maris", stem: "mar", decl: 3, gender: "N", meaning: "mare", type: "neuter_i_stem" },
+      { id: "36", nomSg: "animal", genSg: "animalis", stem: "animal", decl: 3, gender: "N", meaning: "animale", type: "neuter_i_stem" },
+
+      // 4th Declension
+      { id: "37", nomSg: "fructus", genSg: "fructus", stem: "fruct", decl: 4, gender: "M", meaning: "frutto", type: "standard" },
+      { id: "38", nomSg: "exercitus", genSg: "exercitus", stem: "exercit", decl: 4, gender: "M", meaning: "esercito", type: "standard" },
+      { id: "39", nomSg: "senatus", genSg: "senatus", stem: "senat", decl: 4, gender: "M", meaning: "senato", type: "standard" },
+      { id: "40", nomSg: "manus", genSg: "manus", stem: "man", decl: 4, gender: "F", meaning: "mano, schiera", type: "standard" },
+      { id: "41", nomSg: "cornu", genSg: "cornus", stem: "corn", decl: 4, gender: "N", meaning: "corno, ala", type: "standard" },
+
+      // 5th Declension
+      { id: "42", nomSg: "res", genSg: "rei", stem: "r", decl: 5, gender: "F", meaning: "cosa, fatto", type: "standard" },
+      { id: "43", nomSg: "dies", genSg: "diei", stem: "di", decl: 5, gender: "M", meaning: "giorno", type: "standard" },
+      { id: "44", nomSg: "fides", genSg: "fidei", stem: "fid", decl: 5, gender: "F", meaning: "fede, lealtà", type: "standard" },
+      { id: "45", nomSg: "spes", genSg: "spei", stem: "sp", decl: 5, gender: "F", meaning: "speranza", type: "standard" }
+    ];
+
+    // --- APPLICATION STATE ---
+    let nounsList = [];
+    let targetQuestionLimit = 10;
+    let isTimerEnabled = true;
+
+    // Quiz Session Variables
+    let currentQuestionIndex = 0;
+    let currentNoun = null;
+    let currentForms12 = [];
+    let currentTargetFormStr = "";
+    let arrDsp = new Array(12).fill(0); // Valid case/number flags
+    let isChecked = false;
+
+    // Timer Variables
+    let timerInterval = null;
+    let secondsLeft = 25;
+
+    // Stats Variables
+    let statTotal = 0;
+    let statExact = 0;
+    let statPartial = 0;
+    let statWrong = 0;
+    let totalScoreSum = 0;
+    let declBreakdown = {
+      1: { exact: 0, partial: 0, wrong: 0 },
+      2: { exact: 0, partial: 0, wrong: 0 },
+      3: { exact: 0, partial: 0, wrong: 0 },
+      4: { exact: 0, partial: 0, wrong: 0 },
+      5: { exact: 0, partial: 0, wrong: 0 }
+    };
+
+    // --- INITIALIZATION ---
+    window.onload = function() {
+      loadNounsFromStorage();
+      renderCasesTable();
+      updateFilterState();
+      resetCurrentSession();
+    };
+
+    // --- MORPHOLOGICAL DECLENSION ENGINE ---
+    function generateNounForms(noun) {
+      const d = parseInt(noun.decl);
+      const g = noun.gender;
+      const stem = noun.stem;
+      const nomSg = noun.nomSg;
+      const type = noun.type || 'standard';
+
+      let forms = new Array(12);
+
+      if (d === 1) {
+        forms[0] = nomSg;          // Nom Sg
+        forms[1] = stem + "ae";    // Gen Sg
+        forms[2] = stem + "ae";    // Dat Sg
+        forms[3] = stem + "am";    // Acc Sg
+        forms[4] = nomSg;          // Voc Sg
+        forms[5] = stem + "a";     // Abl Sg
+        forms[6] = stem + "ae";    // Nom Pl
+        forms[7] = stem + "arum";  // Gen Pl
+        forms[8] = stem + "is";    // Dat Pl
+        forms[9] = stem + "as";    // Acc Pl
+        forms[10] = stem + "ae";   // Voc Pl
+        forms[11] = stem + "is";   // Abl Pl
+      } else if (d === 2) {
+        if (g === 'N') {
+          forms[0] = nomSg;        // Nom Sg
+          forms[1] = stem + "i";   // Gen Sg
+          forms[2] = stem + "o";   // Dat Sg
+          forms[3] = nomSg;        // Acc Sg
+          forms[4] = nomSg;        // Voc Sg
+          forms[5] = stem + "o";   // Abl Sg
+          forms[6] = stem + "a";   // Nom Pl
+          forms[7] = stem + "orum";// Gen Pl
+          forms[8] = stem + "is";  // Dat Pl
+          forms[9] = stem + "a";   // Acc Pl
+          forms[10] = stem + "a";  // Voc Pl
+          forms[11] = stem + "is"; // Abl Pl
+        } else {
+          forms[0] = nomSg;        // Nom Sg
+          forms[1] = stem + "i";   // Gen Sg
+          forms[2] = stem + "o";   // Dat Sg
+          forms[3] = stem + "um";  // Acc Sg
+          forms[4] = nomSg.endsWith("us") ? stem + "e" : nomSg; // Voc Sg
+          forms[5] = stem + "o";   // Abl Sg
+          forms[6] = stem + "i";   // Nom Pl
+          forms[7] = stem + "orum";// Gen Pl
+          forms[8] = stem + "is";  // Dat Pl
+          forms[9] = stem + "os";  // Acc Pl
+          forms[10] = stem + "i";  // Voc Pl
+          forms[11] = stem + "is"; // Abl Pl
+        }
+      } else if (d === 3) {
+        if (g === 'N') {
+          if (type === 'neuter_i_stem') {
+            forms[0] = nomSg;      // Nom Sg
+            forms[1] = stem + "is"; // Gen Sg
+            forms[2] = stem + "i";  // Dat Sg
+            forms[3] = nomSg;      // Acc Sg
+            forms[4] = nomSg;      // Voc Sg
+            forms[5] = stem + "i";  // Abl Sg
+            forms[6] = stem + "ia"; // Nom Pl
+            forms[7] = stem + "ium";// Gen Pl
+            forms[8] = stem + "ibus";// Dat Pl
+            forms[9] = stem + "ia"; // Acc Pl
+            forms[10] = stem + "ia";// Voc Pl
+            forms[11] = stem + "ibus";// Abl Pl
+          } else {
+            forms[0] = nomSg;      // Nom Sg
+            forms[1] = stem + "is"; // Gen Sg
+            forms[2] = stem + "i";  // Dat Sg
+            forms[3] = nomSg;      // Acc Sg
+            forms[4] = nomSg;      // Voc Sg
+            forms[5] = stem + "e";  // Abl Sg
+            forms[6] = stem + "a";  // Nom Pl
+            forms[7] = stem + "um"; // Gen Pl
+            forms[8] = stem + "ibus";// Dat Pl
+            forms[9] = stem + "a";  // Acc Pl
+            forms[10] = stem + "a"; // Voc Pl
+            forms[11] = stem + "ibus";// Abl Pl
+          }
+        } else {
+          const genPl = (type === 'i_stem') ? stem + "ium" : stem + "um";
+          forms[0] = nomSg;        // Nom Sg
+          forms[1] = stem + "is";   // Gen Sg
+          forms[2] = stem + "i";    // Dat Sg
+          forms[3] = stem + "em";   // Acc Sg
+          forms[4] = nomSg;        // Voc Sg
+          forms[5] = stem + "e";    // Abl Sg
+          forms[6] = stem + "es";   // Nom Pl
+          forms[7] = genPl;        // Gen Pl
+          forms[8] = stem + "ibus"; // Dat Pl
+          forms[9] = stem + "es";   // Acc Pl
+          forms[10] = stem + "es";  // Voc Pl
+          forms[11] = stem + "ibus";// Abl Pl
+        }
+      } else if (d === 4) {
+        if (g === 'N') {
+          forms[0] = nomSg;        // Nom Sg
+          forms[1] = stem + "us";   // Gen Sg
+          forms[2] = stem + "u";    // Dat Sg
+          forms[3] = nomSg;        // Acc Sg
+          forms[4] = nomSg;        // Voc Sg
+          forms[5] = stem + "u";    // Abl Sg
+          forms[6] = stem + "ua";   // Nom Pl
+          forms[7] = stem + "uum";  // Gen Pl
+          forms[8] = stem + "ibus"; // Dat Pl
+          forms[9] = stem + "ua";   // Acc Pl
+          forms[10] = stem + "ua";  // Voc Pl
+          forms[11] = stem + "ibus";// Abl Pl
+        } else {
+          forms[0] = nomSg;        // Nom Sg
+          forms[1] = stem + "us";   // Gen Sg
+          forms[2] = stem + "ui";   // Dat Sg
+          forms[3] = stem + "um";   // Acc Sg
+          forms[4] = nomSg;        // Voc Sg
+          forms[5] = stem + "u";    // Abl Sg
+          forms[6] = stem + "us";   // Nom Pl
+          forms[7] = stem + "uum";  // Gen Pl
+          forms[8] = stem + "ibus"; // Dat Pl
+          forms[9] = stem + "us";   // Acc Pl
+          forms[10] = stem + "us";  // Voc Pl
+          forms[11] = stem + "ibus";// Abl Pl
+        }
+      } else if (d === 5) {
+        forms[0] = nomSg;          // Nom Sg
+        forms[1] = stem + "ei";    // Gen Sg
+        forms[2] = stem + "ei";    // Dat Sg
+        forms[3] = stem + "em";    // Acc Sg
+        forms[4] = nomSg;          // Voc Sg
+        forms[5] = stem + "e";     // Abl Sg
+        forms[6] = stem + "es";    // Nom Pl
+        forms[7] = stem + "erum";  // Gen Pl
+        forms[8] = stem + "ebus";  // Dat Pl
+        forms[9] = stem + "es";    // Acc Pl
+        forms[10] = stem + "es";   // Voc Pl
+        forms[11] = stem + "ebus"; // Abl Pl
+      }
+
+      return forms;
+    }
+
+    // --- STORAGE & VOCABULARY MANAGERS ---
+    function loadNounsFromStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          nounsList = JSON.parse(saved);
+        } catch (e) {
+          nounsList = [...DEFAULT_NOUNS];
+        }
+      } else {
+        nounsList = [...DEFAULT_NOUNS];
+        saveNounsToStorage();
+      }
+      document.getElementById('nounCountBadge').innerText = nounsList.length;
+    }
+
+    function saveNounsToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(nounsList));
+      document.getElementById('nounCountBadge').innerText = nounsList.length;
+    }
+
+    function resetVocabularyToDefault() {
+      if (confirm("Sei sicuro di voler ripristinare il vocabolario predefinito? Tutte le modifiche o aggiunte personalizzate andranno perse.")) {
+        nounsList = [...DEFAULT_NOUNS];
+        saveNounsToStorage();
+        renderVocabularyTable();
+        alert("Vocabolario ripristinato con successo!");
+      }
+    }
+
+    // --- UI TABLE RENDERERS ---
+    function renderCasesTable() {
+      const tbody = document.getElementById('casesTableBody');
+      tbody.innerHTML = '';
+
+      CASES.forEach((caseName, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-amber-50/30' : 'bg-slate-50/70 hover:bg-amber-50/30';
+
+        const sgIdx = index;        // 0..5 -> Sg
+        const plIdx = index + 6;    // 6..11 -> Pl
+
+        tr.innerHTML = `
+          <td class="px-4 py-2.5 font-bold text-slate-800 border-r border-slate-100">${caseName}</td>
+          <td class="px-4 py-2.5 text-center bg-amber-50/30">
+            <input type="checkbox" id="chk_${sgIdx}" onchange="onCaseCheckboxChange()" class="case-chk rounded text-amber-600 focus:ring-amber-500 h-4 w-4 cursor-pointer">
+          </td>
+          <td class="px-4 py-2.5 text-center bg-indigo-50/30">
+            <input type="checkbox" id="chk_${plIdx}" onchange="onCaseCheckboxChange()" class="case-chk rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer">
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderVocabularyTable() {
+      const tbody = document.getElementById('vocabTableBody');
+      const search = document.getElementById('vocabSearch').value.toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const filtered = nounsList.filter(n => 
+        n.nomSg.toLowerCase().includes(search) || 
+        n.genSg.toLowerCase().includes(search) || 
+        n.meaning.toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Nessun sostantivo trovato.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(n => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 border-b border-slate-100";
+        tr.innerHTML = `
+          <td class="px-3 py-2 font-bold font-serif text-amber-900">${n.nomSg}, ${n.genSg}</td>
+          <td class="px-3 py-2"><span class="bg-slate-200 px-1.5 py-0.5 rounded text-[10px] font-semibold">${n.decl}ª decl.</span></td>
+          <td class="px-3 py-2"><span class="uppercase text-[10px] font-bold text-slate-500">${n.gender}</span></td>
+          <td class="px-3 py-2 italic text-slate-600">${n.meaning}</td>
+          <td class="px-3 py-2 text-right space-x-1">
+            <button onclick="editNoun('${n.id}')" class="text-indigo-600 hover:text-indigo-900 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button onclick="deleteNoun('${n.id}')" class="text-red-600 hover:text-red-900 p-1"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- QUIZ LOGIC & WORKFLOW ---
+    function getActiveFilteredNouns() {
+      const activeDecls = [];
+      for (let i = 1; i <= 5; i++) {
+        if (document.getElementById(`decl${i}`).checked) activeDecls.push(i);
+      }
+
+      const activeGenders = [];
+      if (document.getElementById('genM').checked) activeGenders.push('M');
+      if (document.getElementById('genF').checked) activeGenders.push('F');
+      if (document.getElementById('genN').checked) activeGenders.push('N');
+
+      return nounsList.filter(n => activeDecls.includes(parseInt(n.decl)) && activeGenders.includes(n.gender));
+    }
+
+    function setLimit(limit) {
+      targetQuestionLimit = limit;
+      document.querySelectorAll('.limit-btn').forEach(btn => {
+        const l = parseInt(btn.getAttribute('data-limit'));
+        if (l === limit) {
+          btn.className = "limit-btn bg-amber-50 text-amber-900 border border-amber-300 font-bold py-1.5 px-2 rounded transition shadow-sm";
+        } else {
+          btn.className = "limit-btn bg-slate-50 text-slate-700 border border-slate-200 font-medium py-1.5 px-2 rounded transition hover:bg-slate-100";
+        }
+      });
+      updateProgressDisplay();
+    }
+
+    function toggleTimerSetting() {
+      isTimerEnabled = document.getElementById('timerToggle').checked;
+      const timerContainer = document.getElementById('timerContainer');
+      if (isTimerEnabled) {
+        timerContainer.classList.remove('opacity-30', 'pointer-events-none');
+      } else {
+        stopClock();
+        timerContainer.classList.add('opacity-30', 'pointer-events-none');
+        document.getElementById('timerDisplay').innerText = "-- s";
+      }
+    }
+
+    function updateFilterState() {
+      const available = getActiveFilteredNouns();
+      if (available.length === 0) {
+        document.getElementById('latinFormWord').innerText = "Attenzione";
+        document.getElementById('latinFormLemma').innerText = "Seleziona almeno un genere ed una declinazione!";
+        document.getElementById('btnNewQuestion').disabled = true;
+      } else {
+        document.getElementById('btnNewQuestion').disabled = false;
+      }
+    }
+
+    function selectAllFilters() {
+      for (let i = 1; i <= 5; i++) document.getElementById(`decl${i}`).checked = true;
+      document.getElementById('genM').checked = true;
+      document.getElementById('genF').checked = true;
+      document.getElementById('genN').checked = true;
+      updateFilterState();
+    }
+
+    function deselectAllFilters() {
+      for (let i = 1; i <= 5; i++) document.getElementById(`decl${i}`).checked = false;
+      document.getElementById('genM').checked = false;
+      document.getElementById('genF').checked = false;
+      document.getElementById('genN').checked = false;
+      updateFilterState();
+    }
+
+    function resetCurrentSession() {
+      stopClock();
+      currentQuestionIndex = 0;
+      statTotal = 0;
+      statExact = 0;
+      statPartial = 0;
+      statWrong = 0;
+      totalScoreSum = 0;
+      isChecked = true;
+
+      declBreakdown = {
+        1: { exact: 0, partial: 0, wrong: 0 },
+        2: { exact: 0, partial: 0, wrong: 0 },
+        3: { exact: 0, partial: 0, wrong: 0 },
+        4: { exact: 0, partial: 0, wrong: 0 },
+        5: { exact: 0, partial: 0, wrong: 0 }
+      };
+
+      updateStatsDisplay();
+      updateProgressDisplay();
+      clearCheckboxes();
+      hideFeedback();
+
+      document.getElementById('latinFormWord').innerText = "Inizia Prova";
+      document.getElementById('latinFormLemma').innerText = "Clicca su 'Nuova Domanda' per cominciare";
+      document.getElementById('btnCheckAnswer').disabled = true;
+      document.getElementById('btnFinalVal').disabled = true;
+      document.getElementById('btnNewQuestion').disabled = false;
+    }
+
+    function nextQuestion() {
+      const available = getActiveFilteredNouns();
+      if (available.length === 0) {
+        alert("Nessun sostantivo disponibile per i filtri selezionati!");
+        return;
+      }
+
+      if (!isChecked && currentNoun !== null) {
+        if (!confirm("Non hai ancora controllato la risposta precedente. Vuoi passare a una nuova domanda accumulando una risposta non risposta?")) {
+          return;
+        }
+      }
+
+      // Check target limit
+      if (targetQuestionLimit > 0 && currentQuestionIndex >= targetQuestionLimit) {
+        showFinalEvaluationModal();
+        return;
+      }
+
+      currentQuestionIndex++;
+      updateProgressDisplay();
+
+      // Pick Random Noun
+      currentNoun = available[Math.floor(Math.random() * available.length)];
+      currentForms12 = generateNounForms(currentNoun);
+
+      // Pick Random Case/Number index (0..11)
+      let randFormIdx = Math.floor(Math.random() * 12);
+      
+      // Handle rare 5th declension index adjustment if applicable
+      if (currentNoun.decl === 5 && randFormIdx > 5 && Math.random() < 0.2) {
+        randFormIdx = randFormIdx % 6; // Bias towards singular if stem is rare
+      }
+
+      currentTargetFormStr = currentForms12[randFormIdx];
+
+      // Calculate Polyvalent Flags (arrDsp)
+      arrDsp.fill(0);
+      for (let i = 0; i < 12; i++) {
+        if (currentForms12[i] === currentTargetFormStr) {
+          arrDsp[i] = 1;
+        }
+      }
+
+      // Render UI
+      document.getElementById('latinFormWord').innerText = currentTargetFormStr;
+      
+      const genderLabel = currentNoun.gender === 'M' ? 'm.' : (currentNoun.gender === 'F' ? 'f.' : 'n.');
+      document.getElementById('latinFormLemma').innerText = `da ${currentNoun.nomSg}, ${currentNoun.genSg} (${genderLabel}) - "${currentNoun.meaning}"`;
+
+      clearCheckboxes();
+      hideFeedback();
+
+      isChecked = false;
+      document.getElementById('btnCheckAnswer').disabled = false;
+      document.getElementById('btnNewQuestion').disabled = true;
+
+      // Start Clock if enabled
+      if (isTimerEnabled) {
+        startClock();
+      }
+    }
+
+    function onCaseCheckboxChange() {
+      if (isChecked) return;
+      const checkedBoxes = document.querySelectorAll('.case-chk:checked');
+      document.getElementById('btnCheckAnswer').disabled = checkedBoxes.length === 0;
+    }
+
+    function clearCheckboxes() {
+      for (let i = 0; i < 12; i++) {
+        const chk = document.getElementById(`chk_${i}`);
+        if (chk) {
+          chk.checked = false;
+          chk.disabled = false;
+        }
+      }
+    }
+
+    function getSelectedCheckboxes() {
+      const arr = new Array(12).fill(0);
+      for (let i = 0; i < 12; i++) {
+        const chk = document.getElementById(`chk_${i}`);
+        if (chk && chk.checked) arr[i] = 1;
+      }
+      return arr;
+    }
+
+    function formatValenceList(arr) {
+      let list = [];
+      for (let i = 0; i < 12; i++) {
+        if (arr[i] === 1) {
+          const caseName = CASES[i % 6];
+          const numName = NUMBERS[Math.floor(i / 6)];
+          list.push(`<strong>${caseName} ${numName}</strong>`);
+        }
+      }
+      return list.join(', ');
+    }
+
+    function checkUserAnswer() {
+      if (isChecked) return;
+      stopClock();
+
+      const userRisp = getSelectedCheckboxes();
+      
+      let totalValidCount = 0;
+      let userCorrectCount = 0;
+      let userWrongCount = 0;
+      let userMissedCount = 0;
+
+      for (let i = 0; i < 12; i++) {
+        if (arrDsp[i] === 1) totalValidCount++;
+        if (userRisp[i] === 1 && arrDsp[i] === 1) userCorrectCount++;
+        if (userRisp[i] === 1 && arrDsp[i] === 0) userWrongCount++;
+        if (userRisp[i] === 0 && arrDsp[i] === 1) userMissedCount++;
+      }
+
+      if (userCorrectCount + userWrongCount === 0) {
+        alert("Seleziona almeno una delle opzioni prima di chiedere il controllo!");
+        if (isTimerEnabled) startClock();
+        return;
+      }
+
+      isChecked = true;
+      statTotal++;
+
+      let questionScore = 0;
+      let outcome = "wrong"; // exact, partial, wrong
+
+      if (userWrongCount === 0 && userMissedCount === 0) {
+        // Perfect Answer
+        questionScore = 10;
+        outcome = "exact";
+        statExact++;
+        declBreakdown[currentNoun.decl].exact++;
+      } else if (userWrongCount === 0 && userMissedCount > 0) {
+        // Partial Answer
+        questionScore = Math.round((userCorrectCount / totalValidCount) * 10 * 100) / 100;
+        outcome = "partial";
+        statPartial++;
+        declBreakdown[currentNoun.decl].partial++;
+      } else {
+        // Wrong Answer
+        questionScore = 0;
+        outcome = "wrong";
+        statWrong++;
+        declBreakdown[currentNoun.decl].wrong++;
+      }
+
+      totalScoreSum += questionScore;
+
+      // Lock checkboxes
+      for (let i = 0; i < 12; i++) {
+        const chk = document.getElementById(`chk_${i}`);
+        if (chk) chk.disabled = true;
+      }
+
+      // Render Feedback Box
+      renderFeedback(outcome, questionScore, userRisp);
+
+      // Update Controls
+      document.getElementById('btnCheckAnswer').disabled = true;
+      document.getElementById('btnNewQuestion').disabled = false;
+      document.getElementById('btnFinalVal').disabled = false;
+
+      updateStatsDisplay();
+
+      // Check auto completion
+      if (targetQuestionLimit > 0 && currentQuestionIndex >= targetQuestionLimit) {
+        setTimeout(() => {
+          showFinalEvaluationModal();
+        }, 1500);
+      }
+    }
+
+    function renderFeedback(outcome, score, userRisp) {
+      const feedbackBox = document.getElementById('feedbackBox');
+      feedbackBox.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-amber-50', 'border-amber-200', 'text-amber-900', 'bg-red-50', 'border-red-200', 'text-red-900');
+
+      const correctStr = formatValenceList(arrDsp);
+
+      if (outcome === "exact") {
+        const randMsg = MESSAGES_EXACT[Math.floor(Math.random() * MESSAGES_EXACT.length)];
+        feedbackBox.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+        feedbackBox.innerHTML = `
+          <div class="font-bold text-sm flex items-center gap-1.5 text-emerald-800">
+            <i class="fa-solid fa-circle-check text-emerald-600"></i> Risposta Esatta! (${score}/10)
+          </div>
+          <p class="mt-1">${randMsg} Hai individuato correttamente tutte le valenze morfologiche della forma <strong class="font-serif">${currentTargetFormStr}</strong>:</p>
+          <div class="mt-1 bg-white/80 p-2 rounded border border-emerald-200 font-medium">${correctStr}</div>
+        `;
+      } else if (outcome === "partial") {
+        feedbackBox.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-900');
+        feedbackBox.innerHTML = `
+          <div class="font-bold text-sm flex items-center gap-1.5 text-amber-800">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Risposta Incompleta (${score}/10)
+          </div>
+          <p class="mt-1">Non hai commesso errori diretti, ma hai dimenticato alcune valenze polivalenti per la forma <strong class="font-serif">${currentTargetFormStr}</strong>.</p>
+          <p class="mt-1">Tutte le valenze corrette erano:</p>
+          <div class="mt-1 bg-white/80 p-2 rounded border border-amber-200 font-medium">${correctStr}</div>
+        `;
+      } else {
+        feedbackBox.classList.add('bg-red-50', 'border-red-200', 'text-red-900');
+        feedbackBox.innerHTML = `
+          <div class="font-bold text-sm flex items-center gap-1.5 text-red-800">
+            <i class="fa-solid fa-circle-xmark text-red-600"></i> Risposta Errata (0/10)
+          </div>
+          <p class="mt-1">Hai selezionato uno o più casi/numeri non pertinenti alla forma <strong class="font-serif">${currentTargetFormStr}</strong> (${currentNoun.nomSg}, ${currentNoun.genSg}).</p>
+          <p class="mt-1">Ecco le uniche valenze corrette che avresti dovuto selezionare:</p>
+          <div class="mt-1 bg-white/80 p-2 rounded border border-red-200 font-medium text-red-950">${correctStr}</div>
+        `;
+      }
+    }
+
+    function hideFeedback() {
+      const feedbackBox = document.getElementById('feedbackBox');
+      feedbackBox.classList.add('hidden');
+    }
+
+    // --- TIMER ENGINE ---
+    function startClock() {
+      stopClock();
+      secondsLeft = 25;
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        updateTimerDisplay();
+
+        if (secondsLeft <= 0) {
+          stopClock();
+          handleTimeout();
+        }
+      }, 1000);
+    }
+
+    function stopClock() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function updateTimerDisplay() {
+      document.getElementById('timerDisplay').innerText = `${secondsLeft} s`;
+    }
+
+    function handleTimeout() {
+      if (isChecked) return;
+      isChecked = true;
+      statTotal++;
+      statWrong++;
+      declBreakdown[currentNoun.decl].wrong++;
+
+      const randTimeoutMsg = MESSAGES_TIMEOUT[Math.floor(Math.random() * MESSAGES_TIMEOUT.length)];
+
+      for (let i = 0; i < 12; i++) {
+        const chk = document.getElementById(`chk_${i}`);
+        if (chk) chk.disabled = true;
+      }
+
+      const feedbackBox = document.getElementById('feedbackBox');
+      feedbackBox.classList.remove('hidden');
+      feedbackBox.className = "rounded-xl p-4 border text-xs leading-relaxed transition-all bg-red-50 border-red-200 text-red-900";
+      
+      const correctStr = formatValenceList(arrDsp);
+      feedbackBox.innerHTML = `
+        <div class="font-bold text-sm flex items-center gap-1.5 text-red-800">
+          <i class="fa-solid fa-hourglass-end text-red-600"></i> Tempo Scaduto! (0/10)
+        </div>
+        <p class="mt-1">${randTimeoutMsg} Il tempo di 25 secondi a tua disposizione è terminato. Ti viene addebitata una risposta errata.</p>
+        <p class="mt-1">Le valenze corrette della forma <strong class="font-serif">${currentTargetFormStr}</strong> erano:</p>
+        <div class="mt-1 bg-white/80 p-2 rounded border border-red-200 font-medium">${correctStr}</div>
+      `;
+
+      document.getElementById('btnCheckAnswer').disabled = true;
+      document.getElementById('btnNewQuestion').disabled = false;
+      document.getElementById('btnFinalVal').disabled = false;
+
+      updateStatsDisplay();
+    }
+
+    // --- STATS & DISPLAY UPDATES ---
+    function updateStatsDisplay() {
+      document.getElementById('statTotal').innerText = statTotal;
+      document.getElementById('statExact').innerText = statExact;
+      document.getElementById('statPartial').innerText = statPartial;
+      document.getElementById('statWrong').innerText = statWrong;
+
+      if (statTotal > 0) {
+        const avg = Math.round((totalScoreSum / statTotal) * 100) / 100;
+        document.getElementById('statMark').innerText = avg.toFixed(1);
+      } else {
+        document.getElementById('statMark').innerText = "--";
+      }
+    }
+
+    function updateProgressDisplay() {
+      const text = document.getElementById('questionProgressText');
+      const bar = document.getElementById('progressBar');
+
+      if (targetQuestionLimit === 0) {
+        text.innerText = `Domanda ${currentQuestionIndex + 1} (Modalità Libera)`;
+        bar.style.width = '100%';
+      } else {
+        const curr = Math.min(currentQuestionIndex, targetQuestionLimit);
+        text.innerText = `Domanda ${curr} di ${targetQuestionLimit}`;
+        const pct = Math.round((curr / targetQuestionLimit) * 100);
+        bar.style.width = `${pct}%`;
+      }
+    }
+
+    // --- EVALUATION MODAL ---
+    function showFinalEvaluationModal() {
+      stopClock();
+
+      const modal = document.getElementById('evaluationModal');
+      modal.classList.remove('hidden');
+
+      const markScore = statTotal > 0 ? (Math.round((totalScoreSum / statTotal) * 100) / 100) : 0;
+      document.getElementById('finalMarkScore').innerText = `${markScore.toFixed(1)} / 10`;
+
+      // Commentary Generator
+      let comment = "";
+      if (markScore >= 9.0) comment = "Bravissimo! Eccellente padronanza della morfologia e declinazione dei sostantivi latini!";
+      else if (markScore >= 7.5) comment = "Complimenti! La tua conoscenza dei sostantivi è più che discreta!";
+      else if (markScore >= 6.0) comment = "Sufficiente. Conosci la struttura generale, ma attenzione alle forme polivalenti.";
+      else if (markScore >= 5.0) comment = "Le tue conoscenze sono risicate. È consigliabile un ripasso sistematico delle desinenze.";
+      else comment = "Incertezza diffusa nelle declinazioni. Occorre uno studio approfondito dei paradigmi!";
+
+      document.getElementById('finalComment').innerText = comment;
+
+      document.getElementById('finalStatTotal').innerText = statTotal;
+      document.getElementById('finalStatExact').innerText = statExact;
+      document.getElementById('finalStatPartial').innerText = statPartial;
+      document.getElementById('finalStatWrong').innerText = statWrong;
+
+      // Render per-declension breakdown
+      const breakdownContainer = document.getElementById('declensionBreakdownList');
+      breakdownContainer.innerHTML = '';
+
+      for (let d = 1; d <= 5; d++) {
+        const st = declBreakdown[d];
+        const row = document.createElement('div');
+        row.className = "flex justify-between items-center border-b border-slate-200/50 pb-1";
+        row.innerHTML = `
+          <span class="font-semibold text-slate-700">${d}ª Declinazione:</span>
+          <span>
+            <span class="text-emerald-700 font-bold">${st.exact}</span> / 
+            <span class="text-amber-700 font-bold">${st.partial}</span> / 
+            <span class="text-red-700 font-bold">${st.wrong}</span>
+          </span>
+        `;
+        breakdownContainer.appendChild(row);
+      }
+    }
+
+    function closeEvaluationModal() {
+      document.getElementById('evaluationModal').classList.add('hidden');
+      resetCurrentSession();
+    }
+
+    // --- VOCABULARY MODAL & FORMS ---
+    function openVocabularyModal() {
+      renderVocabularyTable();
+      document.getElementById('vocabularyModal').classList.remove('hidden');
+    }
+
+    function closeVocabularyModal() {
+      document.getElementById('vocabularyModal').classList.add('hidden');
+      updateFilterState();
+    }
+
+    function resetForm() {
+      document.getElementById('nounForm').reset();
+      document.getElementById('nounEditId').value = "";
+      document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-plus-circle"></i> Aggiungi Nuovo Sostantivo`;
+    }
+
+    function handleNounFormSubmit(e) {
+      e.preventDefault();
+
+      const editId = document.getElementById('nounEditId').value;
+      const nomSg = document.getElementById('inputNomSg').value.trim();
+      const genSg = document.getElementById('inputGenSg').value.trim();
+      const stem = document.getElementById('inputStem').value.trim();
+      const decl = parseInt(document.getElementById('inputDecl').value);
+      const gender = document.getElementById('inputGender').value;
+      const type = document.getElementById('inputType').value;
+      const meaning = document.getElementById('inputMeaning').value.trim();
+
+      if (editId) {
+        const idx = nounsList.findIndex(n => n.id === editId);
+        if (idx !== -1) {
+          nounsList[idx] = { id: editId, nomSg, genSg, stem, decl, gender, type, meaning };
+        }
+      } else {
+        const newNoun = {
+          id: Date.now().toString(),
+          nomSg, genSg, stem, decl, gender, type, meaning
+        };
+        nounsList.push(newNoun);
+      }
+
+      saveNounsToStorage();
+      renderVocabularyTable();
+      resetForm();
+    }
+
+    function editNoun(id) {
+      const noun = nounsList.find(n => n.id === id);
+      if (!noun) return;
+
+      document.getElementById('nounEditId').value = noun.id;
+      document.getElementById('inputNomSg').value = noun.nomSg;
+      document.getElementById('inputGenSg').value = noun.genSg;
+      document.getElementById('inputStem').value = noun.stem;
+      document.getElementById('inputDecl').value = noun.decl;
+      document.getElementById('inputGender').value = noun.gender;
+      document.getElementById('inputType').value = noun.type || 'standard';
+      document.getElementById('inputMeaning').value = noun.meaning;
+
+      document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Modifica Sostantivo: <strong>${noun.nomSg}</strong>`;
+    }
+
+    function deleteNoun(id) {
+      if (nounsList.length <= 1) {
+        alert("Devi mantenere almeno un sostantivo nel vocabolario!");
+        return;
+      }
+      if (confirm("Sei sicuro di voler eliminare questo sostantivo?")) {
+        nounsList = nounsList.filter(n => n.id !== id);
+        saveNounsToStorage();
+        renderVocabularyTable();
+      }
+    }
+
+    function exportVocabularyJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(nounsList, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "sostantivi_latini_vocabolario.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importVocabularyJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported) && imported.length > 0 && imported[0].nomSg && imported[0].stem) {
+            nounsList = imported;
+            saveNounsToStorage();
+            renderVocabularyTable();
+            alert("Vocabolario importato con successo!");
+          } else {
+            alert("Il file JSON non sembra contenere una lista valida di sostantivi latini.");
+          }
+        } catch (err) {
+          alert("Errore nella lettura del file JSON: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
